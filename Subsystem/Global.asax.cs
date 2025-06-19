@@ -21,7 +21,7 @@ namespace Subsystem
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            TcpChannel tcpChannel = new TcpChannel(8080);
+            TcpChannel tcpChannel = new TcpChannel(8282);
             ChannelServices.RegisterChannel(tcpChannel);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(SystemInfo), "system_info_service", WellKnownObjectMode.SingleCall);
         }
