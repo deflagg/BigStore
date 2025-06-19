@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SubsystemBL
 {
-    public class SystemInfo : MarshalByRefObject
+    public class SystemInfo : MarshalByRefObject, ISystemInfo
     {
         public string GetSystemName()
         {

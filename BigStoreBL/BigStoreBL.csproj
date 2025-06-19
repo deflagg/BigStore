@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="SubsystemManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ISystemInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SubsystemBL\SubsystemBL.csproj">
