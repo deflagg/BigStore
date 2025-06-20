@@ -1,0 +1,9 @@
+# .dockerignore
+
+# ignore build artifacts
+bin/
+obj/
+
+
+# but keep Dockerfile in the context
+!Dockerfile
