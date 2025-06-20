@@ -15,7 +15,7 @@ namespace BigStoreBL
         public string GetSubsystemName()
         {
             ISystemInfo obj = (ISystemInfo)Activator.GetObject(typeof(ISystemInfo),
-                  "tcp://localhost:8282/system_info_service");
+                  "tcp://subsystem:8282/system_info_service");
 
             return obj.GetSystemName();
         }
