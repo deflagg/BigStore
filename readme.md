@@ -2,6 +2,8 @@
 
 The purpose of this repository is to demonstrate and validate whether a legacy technology—.NET Remoting, first released in 2006—can still function reliably when containerized with Windows Server 2019 and orchestrated on Azure Kubernetes Service (AKS). This experiment aims to objectively assess the compatibility and operational viability of .NET Remoting in a modern cloud-native environment.
 
+> **Note:** The AKS setup for this experiment should use Windows nodes. No particular special configuration is required beyond the standard setup for Windows-based containers in AKS.
+
 This solution consists of two main ASP.NET web applications—**BigStore** and **Subsystem**—that communicate with each other using **.NET Remoting**. The solution is designed for modularity and scalability, with each subsystem able to run independently or as part of a larger distributed system.
 
 ## Project Structure
