@@ -30,8 +30,8 @@ This solution consists of two main ASP.NET web applications—**BigStore** and *
 ### Example Architecture
 
 ```
-+----------------+         .NET Remoting (TCP)         +----------------+
-|   BigStore     | <------------------------------->  |   Subsystem    |
++----------------+         .NET Remoting (TCP)       +----------------+
+|   BigStore     | <-------------------------------> |   Subsystem    |
 |  (Web + BL)    |                                   |  (Web + BL)    |
 +----------------+                                   +----------------+
 ```
