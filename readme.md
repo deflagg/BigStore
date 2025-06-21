@@ -49,25 +49,61 @@ This solution consists of two main ASP.NET web applications—**BigStore** and *
 The following commands show how to build, run, and deploy the applications using Docker, Azure Container Registry, and Azure Kubernetes Service:
 
 ```sh
+# Prerequisites: Azure CLI, Docker, and kubectl must be installed and configured
+
+# Log in to Azure with the specified tenant
 az login --tenant 35d231ad-d70d-
+
+# Set the active Azure subscription
 az account set --subscription 400acf99-3ce6-4ee6-
+
+# Log in to Azure Container Registry
 az acr login --name myacrmonkey
+
+# Get AKS cluster credentials for kubectl
 az aks get-credentials --resource-group migration --name myakscluster
 
+# ----------- Build and deploy BigStore -----------
+
+# Build the BigStore Docker image
 docker build -t myacrmonkey.azurecr.io/bigstore:latest -f ./BigStore_Dockerfile .
+
+# Run BigStore container locally for testing
 docker run -d -p80:80 --name bigstore bigstore:latest 
+
+# Push BigStore image to Azure Container Registry
 docker push myacrmonkey.azurecr.io/bigstore:latest
+
+# Create BigStore deployment in AKS
 kubectl create deployment mybigstore --image=myacrmonkey.azurecr.io/bigstore:latest
+
+# Expose BigStore as a LoadBalancer service
 kubectl expose deployment mybigstore --name bigstoreservice --type=LoadBalancer --port=80 --target-port=80
+
+# Create ingress for BigStore
 kubectl create ingress bigstoreingress --class=nginx --rule="/=bigstoreservice:80"
 
+# ----------- Build and deploy Subsystem -----------
 
+# Build the Subsystem Docker image
 docker build -t myacrmonkey.azurecr.io/subsystem:latest -f ./Subsystem_Dockerfile .
+
+# Run Subsystem container locally for testing
 docker run -d -p81:80 -p8282:8282 --name subsystem subsystem:latest 
+
+# Push Subsystem image to Azure Container Registry
 docker push myacrmonkey.azurecr.io/subsystem:latest
+
+# Create Subsystem deployment in AKS
 kubectl create deployment mysubsystem --image=myacrmonkey.azurecr.io/subsystem:latest
+
+# Expose Subsystem as a LoadBalancer service
 kubectl expose deployment mysubsystem --name subsystem --type=LoadBalancer --port=80 --target-port=80
+
+# Add custom port 8282 to Subsystem service
 kubectl patch service subsystem --type=merge -p "{\"spec\":{\"ports\":[{\"name\":\"http\",\"port\":80,\"targetPort\":80},{\"name\":\"custom-port\",\"port\":8282,\"targetPort\":8282}]}}"
+
+# Create ingress for Subsystem
 kubectl create ingress subsystemingress --class=nginx --rule="/=subsystemingress:80"
 ```
 
