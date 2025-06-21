@@ -1,3 +1,54 @@
+# BigStore Solution Overview
+
+The purpose of this repository is to demonstrate and validate whether a legacy technology—.NET Remoting, first released over 20 years ago—can still function reliably when containerized with Windows Server 2019 and orchestrated on Azure Kubernetes Service (AKS). This experiment aims to objectively assess the compatibility and operational viability of .NET Remoting in a modern cloud-native environment.
+
+This solution consists of two main ASP.NET web applications—**BigStore** and **Subsystem**—that communicate with each other using **.NET Remoting**. The solution is designed for modularity and scalability, with each subsystem able to run independently or as part of a larger distributed system.
+
+## Project Structure
+
+- **BigStore/**: Main web application (ASP.NET MVC)
+- **BigStoreBL/**: Business logic for BigStore
+- **Subsystem/**: Secondary web application (ASP.NET MVC)
+- **SubsystemBL/**: Business logic for Subsystem
+
+## .NET Remoting Integration
+
+### What is .NET Remoting?
+.NET Remoting is a legacy Microsoft technology introduced in **2002** with the first release of the .NET Framework. It allows applications to communicate across application domains, processes, or network boundaries, enabling objects in different processes (or on different machines) to interact as if they were local.
+
+**.NET Remoting pre-dates and was eventually replaced by newer technologies such as:**
+- **Windows Communication Foundation (WCF)** (introduced in 2006, .NET Framework 3.0)
+- **gRPC** (modern, cross-platform, high-performance RPC framework)
+- **RESTful APIs** (using ASP.NET Web API, introduced in 2012)
+
+### How It Works in This Solution
+- **BigStore** and **Subsystem** each expose business logic objects (e.g., managers, services) via .NET Remoting.
+- These objects are registered as remote services, typically using TCP channels.
+- Each application acts as both a remoting server (exposing its own objects) and a remoting client (consuming objects from the other app).
+- Communication is handled by referencing shared interfaces or contracts (e.g., in `BigStoreBL` and `SubsystemBL`).
+
+### Example Architecture
+
+```
++----------------+         .NET Remoting (TCP)         +----------------+
+|   BigStore     | <------------------------------->  |   Subsystem    |
+|  (Web + BL)    |                                   |  (Web + BL)    |
++----------------+                                   +----------------+
+```
+
+- Both apps host their own remoting endpoints.
+- Each can call business logic methods on the other via remoting proxies.
+
+### Why Use .NET Remoting?
+- Enables distributed processing and separation of concerns.
+- Allows for independent scaling and deployment of subsystems.
+- (Note: .NET Remoting is now considered legacy; for new projects, consider WCF, gRPC, or REST APIs.)
+
+## Deployment & Running (AKS, Docker, Kubernetes)
+
+The following commands show how to build, run, and deploy the applications using Docker, Azure Container Registry, and Azure Kubernetes Service:
+
+```sh
 az login --tenant 35d231ad-d70d-
 az account set --subscription 400acf99-3ce6-4ee6-
 az acr login --name myacrmonkey
@@ -18,3 +69,8 @@ kubectl create deployment mysubsystem --image=myacrmonkey.azurecr.io/subsystem:l
 kubectl expose deployment mysubsystem --name subsystem --type=LoadBalancer --port=80 --target-port=80
 kubectl patch service subsystem --type=merge -p "{\"spec\":{\"ports\":[{\"name\":\"http\",\"port\":80,\"targetPort\":80},{\"name\":\"custom-port\",\"port\":8282,\"targetPort\":8282}]}}"
 kubectl create ingress subsystemingress --class=nginx --rule="/=subsystemingress:80"
+```
+
+---
+
+For more details, see the source code and comments in each project. For questions about .NET Remoting, see the official [Microsoft documentation](https://learn.microsoft.com/en-us/dotnet/framework/remoting/).
